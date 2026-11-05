@@ -105,6 +105,8 @@ Unit tests use `pytest-homeassistant-custom-component` with a mocked device and 
 The device API is documented in `custom_components/heatit_wifi/docs/Heatit_WiFi6_OpenAPI_v70.yaml`. Parameters can also be changed directly with an HTTP POST to `/api/parameters`.
 
 ## Version history
+* **2.1.2**
+    * Fix: *Power regulator active time* on a WiFi7. The WiFi6 stores the duty cycle as 1-10 (x10 %), the WiFi7 as the percentage itself, so on a WiFi7 the slider read ten times the real duty cycle (pinned at 100 %) and wrote back a tenth of what was asked. Reported and first fixed by [@jonas0b1011001](https://github.com/jonas0b1011001) ([#4](https://github.com/thanoskas/heatit_wifi/pull/4), [#5](https://github.com/thanoskas/heatit_wifi/pull/5)).
 * **2.1.1**
     * The bundled brand images now include the hDPI versions, so the Heatit icon and logo stay sharp on high resolution screens. The HACS store still shows a placeholder: it reads the Home Assistant brands CDN, which no longer accepts images for custom integrations ([hacs/integration#5171](https://github.com/hacs/integration/issues/5171)).
 * **2.1.0**

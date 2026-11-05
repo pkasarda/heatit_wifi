@@ -56,10 +56,11 @@ def _size_of_load(data: dict[str, Any]) -> float | None:
 
 
 def _power_regulator_active_time(data: dict[str, Any]) -> float | None:
-    # The API stores the PWER duty cycle in 10 % steps (1 = 10 %, 3 min of
-    # the 30 min cycle; default 2 = 20 %).
+    # WiFi6 stores 1-10 (x10 %); WiFi7 reports 10-100 directly in 10 % steps.
     value = (data.get("parameters") or {}).get("powerRegulatorActiveTime")
-    return None if value is None else value * 10
+    if value is None:
+        return None
+    return float(value) if (data.get("model") or value > 10) else value * 10
 
 
 def _action_after_error_payload(value: float) -> int:
@@ -336,7 +337,10 @@ class HeatitWiFiNumber(HeatitWiFiEntity, NumberEntity):
         """Write the new value to the device."""
         parameter = self._api_parameter()
         payload: Any
-        if (payload_fn := self.entity_description.payload_fn) is not None:
+        is_wifi7 = bool((self.coordinator.data or {}).get("model"))
+        if self.entity_description.key == "power_regulator_active_time" and is_wifi7:
+            payload = int(round(value))
+        elif (payload_fn := self.entity_description.payload_fn) is not None:
             payload = payload_fn(value)
         else:
             # Integer-step parameters (brightness, timers) are integers

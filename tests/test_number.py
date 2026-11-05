@@ -102,6 +102,29 @@ async def test_power_regulator_active_time_in_percent(
     mock_api["set_parameter"].assert_awaited_once_with("powerRegulatorActiveTime", 10)
 
 
+@pytest.mark.parametrize("status", [copy.deepcopy(WIFI7_STATUS)])
+async def test_wifi7_power_regulator_active_time(
+    hass: HomeAssistant, config_entry, mock_api
+) -> None:
+    """On a WiFi7, the duty cycle is stored directly as 10-100 in 10 % steps."""
+    entity_id = "number.lab_thermostat_power_regulator_active_time"
+    state = hass.states.get(entity_id)
+    assert state.state == "20"
+    assert state.attributes["unit_of_measurement"] == "%"
+    assert state.attributes["min"] == 10
+    assert state.attributes["max"] == 100
+    assert state.attributes["step"] == 10
+
+    await _set_value(hass, entity_id, 50)
+    mock_api["set_parameter"].assert_awaited_once_with("powerRegulatorActiveTime", 50)
+    assert hass.states.get(entity_id).state == "50"
+
+    mock_api["set_parameter"].reset_mock()
+    await _set_value(hass, entity_id, 10)
+    mock_api["set_parameter"].assert_awaited_once_with("powerRegulatorActiveTime", 10)
+    assert hass.states.get(entity_id).state == "10"
+
+
 @pytest.mark.parametrize(
     ("value", "payload"),
     [(0, 0), (5, 0), (10, 10), (600.0, 600), (65535, 65535)],

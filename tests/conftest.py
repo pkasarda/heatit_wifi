@@ -103,6 +103,7 @@ def _wifi7_status() -> dict[str, Any]:
     params["externalSensorFallback"] = 2
     params["activeDisplayBrightness"] = 70
     params["standbyDisplayBrightness"] = 30
+    params["powerRegulatorActiveTime"] = 20
     params["OWD"] = {"openWindowDetection": True, "activeTime": 900}
     return status
 

@@ -86,7 +86,6 @@ def _wifi7_status() -> dict[str, Any]:
         "SSID": "Lab WiFi",
     }
     status["name"] = "THERMOSTAT_d45568"  # never renamed in the app
-    status["room"] = "Lab"
     status["directLink"] = {"relayControl": [], "masterThermostat": []}
     status["blueFusion"] = {"link": []}
     params = status["parameters"]
